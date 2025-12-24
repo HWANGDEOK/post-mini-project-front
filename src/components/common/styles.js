@@ -14,6 +14,7 @@ export const frame = css`
     border: 3px solid #747474;
     border-radius: 30px;
     padding: 30px;
+    min-width: 1000px;
     width: 1000px;
     height: 650px;
     background-color: #000000;
@@ -57,6 +58,7 @@ export const sideBarLayout = css`
 export const sideBarContainer = css`
     display: flex;
     flex-direction: column;
+    min-width: 200px;
     width: 200px;
     height: 100%;
     background-color: #ffffff;

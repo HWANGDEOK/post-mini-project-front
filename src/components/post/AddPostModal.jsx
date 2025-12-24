@@ -6,16 +6,21 @@ import Loading from "../common/Loading";
 import Select from "react-select";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usecreatePostMutations } from "../../mutations/postMutations";
 
-function AddPostModal({isOpen, onRequestClose, layoutRef}) {
+function AddPostModal({isOpen, onRequestClose, layoutRef, setHomeRefresh}) {
     const [ visibilityOption, setVisibilityOption ] = useState({label: "Public", value: "Public"});
     const [ textareaValue, setTextareaValue ] = useState("");
     const [ uploadImages, setUploadImages ] = useState([]);
+    const [ disabled, setDisabled ] = useState(true);
     const imageListBoxRef = useRef();
     const {isLoading, data} = useMeQuery();
     const createPostMutation = usecreatePostMutations();
+
+    useEffect(() => {
+        setDisabled(!textareaValue && !uploadImages.length);
+    }, [textareaValue, uploadImages])
 
     const handleOnWheel = (e) => {  
         imageListBoxRef.current.scrollLeft += e.deltaY;
@@ -68,6 +73,7 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
             
             await createPostMutation.mutateAsync(formData);
             alert("작성 완료");
+            setHomeRefresh(true);
             onRequestClose();
         } catch(error) {
             alert(error.response.data.message);
@@ -145,7 +151,7 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
                     </div>
                 </main>
                 <footer>
-                    <button css={s.postButton} onClick={handlePostSubmitOnClick}>Post</button>
+                    <button css={s.postButton} onClick={handlePostSubmitOnClick} disabled={disabled}>Post</button>
                     <button onClick={onRequestClose}>Cancel</button>
                 </footer>
             </div>
