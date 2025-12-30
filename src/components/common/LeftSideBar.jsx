@@ -7,11 +7,14 @@ import { MdOutlineExplore } from "react-icons/md";
 import { useMeQuery } from "../../queries/usersQueries";
 import AddPostModal from "../post/AddPostModal";
 import { useEffect, useRef, useState } from "react";
+import { RiChatSmileAiLine } from "react-icons/ri";
+import OpenaiApiModal from "../openai/OpenaiApiModal";
 
 function LeftSideBar({children}) {
     const location = useLocation();
     const {pathname} = location;
     const [ addPostModalOpen, setAddPostModalOpen ] = useState(false);
+    const [ openaiModalOpen, setOpenaiModalOpen ] = useState(false);
     const [ homeRefresh, setHomeRefresh ] = useState(false);
     const layoutRef = useRef();
 
@@ -23,12 +26,32 @@ function LeftSideBar({children}) {
         }
     },[homeRefresh]);
 
+    const handleEscKey = (e) => {
+        if (e.key === "Escape" && openaiModalOpen) {
+            openaiModalClose();
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", handleEscKey);
+        return () => document.removeEventListener("keydown", handleEscKey);
+    }, [handleEscKey]);
+
+
     const handleAddPostModalOpenOnClick = () => {
         setAddPostModalOpen(true);
     }
 
     const addPostModalClose = () => {
         setAddPostModalOpen(false);
+    }
+
+    const handleOpenaiModalOpenOnClick = () => {
+        setOpenaiModalOpen(true);
+    }
+
+    const openaiModalClose = () => {
+        setOpenaiModalOpen(false);
     }
 
     return <div css={s.sideBarLayout} ref={layoutRef}>
@@ -55,6 +78,13 @@ function LeftSideBar({children}) {
                 layoutRef={layoutRef}
                 setHomeRefresh={setHomeRefresh} />
         }
+        <div css={s.aichat} onClick={handleOpenaiModalOpenOnClick}><RiChatSmileAiLine /></div>
+        <div css={s.aichatLayout(openaiModalOpen)}>
+            <div css={s.aichatContainer}>
+                <OpenaiApiModal />
+            </div>
+            <button css={s.aichatClose} onClick={openaiModalClose}>닫기</button>
+        </div>
     </div>
 }
 
